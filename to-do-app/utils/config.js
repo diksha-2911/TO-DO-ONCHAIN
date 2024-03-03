@@ -1,5 +1,5 @@
 export const API_URL = "https://eth-sepolia.g.alchemy.com/v2/Pm6CgB82qy5qoHR0RCRGRnoyi8De8eit";
-export const PRIVATE_KEY = "09ebe7c47a4f6b18c12e848f48b048be3ed5238ae56b0d9cc856ee5a043d8900";
+export const PRIVATE_KEY = "";
 export const CONTRACT_ADDRESS = "0x07746933876b2a625F1bAe56b6Ae95f0E1f4b496";
 export const CONTRACT_ABI = [
 	{
