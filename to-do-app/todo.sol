@@ -1,23 +1,45 @@
-import {ethers} from 'ethers';
+// SPDX-License-Identifier: GPL-3.0
 
-import * as Constants from "../../utils/config";
+pragma solidity ^0.8.0;
 
-
-async function handler (req, res) {
-    try {
-        const task = req.body;
-        const provider = new ethers.providers.JsonRpcProvider(Constants.API_URL);
-        const signer = new ethers.Wallet(Constants.PRIVATE_KEY, provider);
-        const contract = new ethers.Contract(Constants.CONTRACT_ADDRESS, Constants.CONTRACT_ABI, signer);
-        const tx = await contract.addTask(task);
-        await tx.wait();
-
-        res.status(200).json({message : "Task has been added"});
+contract ToDo{
+    enum TaskStatus {Pending, Finished}
+    address owner;
+    struct Task{
+        string desc;
+        TaskStatus status;
     }
 
-    catch (err) {
-        console.error(err);
+    //array of Task struct type
+    Task[] public tasks;
+
+    constructor(){
+        owner = msg.sender;
     }
+
+    //only owner can make changes
+    modifier onlyOwner{
+        require(msg.sender == owner, "Not Owner");
+        _;
+    }
+
+    function addTask(string memory _desc) public onlyOwner{
+        tasks.push(Task(_desc, TaskStatus.Pending)); //append task to array
+    }
+
+    function markAsFinished(uint256 id) public onlyOwner{
+        require(id < tasks.length, "No task has been added");
+        tasks[id].status = TaskStatus.Finished;
+    }
+
+    function getAllTasks() public view returns (Task[] memory){
+        return tasks;
+    }
+
+    function getTask(uint id) public view returns (string memory, TaskStatus){
+        require(id < tasks.length, "No task has been added");
+        return(tasks[id].desc, tasks[id].status);
+    }
+
+
 }
-
-export default handler;
